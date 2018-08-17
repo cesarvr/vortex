@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Hello World! Site Title</title>
+  </head>
+
+  <body>
+
+    <script id="fragment">
+     precision mediump float;
+
+     void main(void) {
+       gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+     } 
+    </script>
+
+    <script id="vertex">
+      attribute vec3 aVertexPosition;
+
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+
+      void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      }
+    </script>
+
+
+
+    <canvas id="glCanvas" width="640" height="480"></canvas>
+  </body>
+
+  <script src="gl-matrix-min.js"></script>
+  <script src="main.js"></script>
+</html>
