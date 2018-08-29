@@ -1,24 +1,55 @@
-(function() {
-  const start = () => {
-    const canvas = document.querySelector('#glCanvas')
+import Vortex from './vortex'
 
-    // Initialize the GL context
-    const gl = canvas.getContext('webgl')
+const vortex = new Vortex(document.querySelector('#glCanvas'))
 
-    // Only continue if WebGL is available and working
-    if (gl === null) {
-      alert('Unable to initialize WebGL. Your browser or machine may not support it.')
-      return
-    }
+let fragment = document.getElementById('fragment').innerText
+let vertex = document.getElementById('vertex').innerText
 
-    // Set clear color to black, fully opaque
+const simple_shader = vortex.build('shader')
 
-    return {
-      gl: gl,
-      width: canvas.width,
-      height: canvas.height
-    }
+simple_shader.load('fragment', fragment)
+             .load('vertex', vertex)
+             .compile()
+
+const triangleMesh = vortex.build('triangle')
+
+triangleMesh.mesh = [
+  1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
+  1.0, -1.0, 0.0, -1.0, -1.0, 0.0
+]
+
+triangleMesh.position.center()
+
+const scene = vortex.build('scene')
+
+scene.addObject({mesh: triangleMesh, shader:simple_shader.variables()})
+
+
+
+
+function newFrame() {
+  let z = 0
+
+  return () => {
+
+    scene.render()
   }
+}
+
+
+function render(newFrame) {
+
+  return function getNextFrame(timestamp) {
+
+    newFrame()
+    window.requestAnimationFrame(getNextFrame)
+  }
+}
+
+window.requestAnimationFrame(render(newFrame()))
+
+
+/*
 
   class Shader {
 
@@ -241,4 +272,4 @@
   }
 
   window.requestAnimationFrame(render(newFrame()))
-})()
+*/
