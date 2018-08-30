@@ -22,6 +22,18 @@ export default class Vortex {
       throw('Unable to initialize WebGL. Your browser or machine may not support it.')
     }
 
+
+    // handle event
+    let self = this
+    //self.webGL.viewport(0, 0, 1920, 1080)
+    //self.webGL.viewport(0, 0, 640, 480)
+    /*window.addEventListener("resize", () => {
+        console.log("Resource conscious resize callback!");
+        let width = self.canvas.clientWidth //offsetWidth
+        let height = self.canvas.clientHeight //offsetHeight
+        console.log(`width:${width} height:${height}`)
+    });*/
+
   }
 
   build(name) {
