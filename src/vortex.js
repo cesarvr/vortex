@@ -8,31 +8,45 @@ function TriangleBuilder(gl) {
 
 const factory = { 'buffer': Buffer, 'shader': Shader, 'triangle': TriangleBuilder, 'scene':Scene }
 
+function resize_viewport({canvas, webGL}) {
+  console.log("Resource conscious resize callback!")
+
+  let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1.0
+  let width  = pixelRatio * canvas.clientWidth 
+  let height = pixelRatio * canvas.clientHeight
+
+  canvas.width = width
+  canvas.height = height 
+
+  console.log(`width:${width} height:${height}`)
+  webGL.viewport(0, 0, webGL.drawingBufferWidth, webGL.drawingBufferHeight)
+}
+
 export default class Vortex {
   constructor({canvasElement}) {
 
-    this.canvas = document.querySelector('#glCanvas')
+    debugger
+    let canvas = document.querySelector('#glCanvas')
+
+
 
     // Initialize the GL context
-    this.webGL = this.canvas.getContext('webgl')
+    const webGL = canvas.getContext('webgl')
+    this.webGL =  webGL
 
     // Only continue if WebGL is available and working
-    if (this.webGL === null) {
+    if (webGL === null) {
       alert('Unable to initialize WebGL. Your browser or machine may not support it.')
       throw('Unable to initialize WebGL. Your browser or machine may not support it.')
     }
 
 
     // handle event
-    let self = this
-    //self.webGL.viewport(0, 0, 1920, 1080)
-    //self.webGL.viewport(0, 0, 640, 480)
-    /*window.addEventListener("resize", () => {
-        console.log("Resource conscious resize callback!");
-        let width = self.canvas.clientWidth //offsetWidth
-        let height = self.canvas.clientHeight //offsetHeight
-        console.log(`width:${width} height:${height}`)
-    });*/
+    window.addEventListener("resize", function() {
+      resize_viewport({canvas: canvas, webGL:webGL })
+    })
+
+    resize_viewport({canvas: canvas, webGL:webGL })
 
   }
 
@@ -43,5 +57,4 @@ export default class Vortex {
 
     return new object({gl:this.webGL})
   }
-
 }

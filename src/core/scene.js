@@ -12,10 +12,10 @@ export class Scene {
     this.projection_m4 = mat4.create()
     this.camera_m4 = mat4.create()
 
-    mat4.perspective(this.projection_m4, deg_to_rad(45), 1920 / 1080 , 0.1, 600.0)
+    mat4.perspective(this.projection_m4, deg_to_rad(45), 1920 / 1080 , 0.1, 1000.0)
     mat4.lookAt(this.camera_m4, [0, 0, -1], [0, 0, -1], [0, 10, -2])
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0)
+    gl.clearColor(0.1, 0.1, 0.1, 1.0)
     gl.enable(gl.DEPTH_TEST)
   }
 
