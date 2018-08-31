@@ -48,6 +48,12 @@ export class Shader {
     this.data.MVP = this.gl.getUniformLocation(this.program, 'MVP')
   }
 
+  use(){
+  
+    this.gl.useProgram(this.program)
+    return this
+  }
+
   variables() {
     return this.data
   }

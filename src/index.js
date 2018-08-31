@@ -2,70 +2,81 @@ import Vortex from './vortex'
 
 const vortex = new Vortex(document.querySelector('#glCanvas'))
 
-let fragment = document.getElementById('fragment').innerText
-let vertex = document.getElementById('vertex').innerText
+function initShader(vortex) {
+  let fragment = document.getElementById('fragment').innerText
+  let vertex = document.getElementById('vertex').innerText
 
-const simple_shader = vortex.build('shader')
-
-simple_shader.load('fragment', fragment)
-  .load('vertex', vertex)
-  .compile()
-
-const rad_to_deg = rad => rad*180/Math.PI
-const deg_to_rad = (deg)  => (deg * Math.PI) / 180
-const polarx = (i,radius) => Math.cos(deg_to_rad(i)) * radius
-const polary = (i,radius) => Math.sin(deg_to_rad(i)) * radius 
-const polar3d = (deg,rad) =>{return  { x: polarx(deg,rad), y: polary(deg,rad), z:0 }}
-
-
-
-function meshis(i, z) {
-
-  let rnd = (n)=> (Math.random() * n) + 1
-  const margin = (360/5) 
-  const deg_to_rad = (deg) => (deg * Math.PI) / 180
-  const polarx = (i,radius)=> Math.cos(deg_to_rad(i))*radius 
-  const polary = (i,radius)=> Math.sin(deg_to_rad(i))*radius 
-
-  const triangleMesh = vortex.build('triangle')
-  triangleMesh.mesh = [
-    1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
-    1.0, -1.0, 0.0, -1.0, -1.0, 0.0
-  ]
-
-  let position = polar3d(i*margin,10) 
-  position.z = -(z*40)
-
-  triangleMesh.position.center()
-  triangleMesh.position.move(position) //-(z*40) })
-  return {model: triangleMesh, position: position  }
+  const simple_shader = vortex.build('shader')
+  return simple_shader
+    .load('fragment', fragment)
+    .load('vertex', vertex)
+    .compile()
 }
 
-const scene = vortex.build('scene')
-let m = []
+const shader = initShader(vortex)
 
+class Quad {
 
-for(let z=0; z<1; z++) {
-  for(let i=0; i<5; i++ ){
-    let ms = meshis(i,z) 
-    m.push(ms)
+  constructor(shader){
+    this.triangleMesh = vortex.build('triangle')
+    this.triangleMesh.mesh = [
+      1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
+      1.0, -1.0, 0.0, -1.0, -1.0, 0.0
+    ]
+    this.triangleMesh.position.center()
+    const rad_to_deg = rad => rad*180/Math.PI
+    const deg_to_rad = deg => deg * Math.PI / 180
+    this.polarx = (i,radius)=> Math.cos(deg_to_rad(i))*radius
+    this.polary = (i,radius)=> Math.sin(deg_to_rad(i))*radius
 
-    scene.addObject({mesh: ms.model, shader:simple_shader.variables()})
+    this.shader = shader
+  }
+
+  moveToAngle(angleInDegrees, radius) {
+    this._angle = angleInDegrees
+    this._radius = radius
+    this.triangleMesh.position.move({x:this.polarx(angleInDegrees, radius), y: this.polary(angleInDegrees, radius)})
+  }
+
+  depth(value){
+   this.triangleMesh.position.move({z:value})
+  }
+
+  get radius(){
+    return this._radius
+  }
+
+  get angle(){
+    return this._angle
+  }
+  get mesh(){
+
+    return {mesh: this.triangleMesh, shader:this.shader.use().variables()}
   }
 }
 
-function update(obj, z) {
+function generateVortex(){
+  debugger
+  const SIZE = 4
+  const RADIUS = 8
+  let slice = 360/SIZE
+  let quads = []
+  for(let i=0; i<SIZE; i++){
+    let quad = new Quad(shader)
+    quad.moveToAngle(slice, RADIUS)
 
- return obj 
+    quads.push(quad)
+  }
+  return quads
 }
+let quads = generateVortex()
+const scene = vortex.build('scene')
+quads.forEach(quad => scene.addObject(quad.mesh))
+
 
 function newFrame() {
-  let z = 0.1
 
   return () => {
-
-    m.forEach(obj  => { update(obj, z) }  )
-    z+=1
     scene.render()
   }
 }
@@ -81,6 +92,3 @@ function render(newFrame) {
 }
 
 window.requestAnimationFrame(render(newFrame()))
-
-
-
