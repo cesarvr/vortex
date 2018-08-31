@@ -35,11 +35,22 @@ class Quad {
   moveToAngle(angleInDegrees, radius) {
     this._angle = angleInDegrees
     this._radius = radius
-    this.triangleMesh.position.move({x:this.polarx(angleInDegrees, radius), y: this.polary(angleInDegrees, radius)})
+    this.x = this.polarx(angleInDegrees, radius)
+    this.y = this.polary(angleInDegrees, radius)
+    this.triangleMesh.position.move({x:this.x, y: this.y, z: this.z})
   }
 
   depth(value){
-   this.triangleMesh.position.move({z:value})
+   this.z = value
+   this.triangleMesh.position.move({x:this.x, y:this.y, z:value})
+  }
+ 
+  set speed(value) {
+    this._speed = value
+  }
+
+  get speed(){
+    return this._speed 
   }
 
   get radius(){
@@ -49,6 +60,12 @@ class Quad {
   get angle(){
     return this._angle
   }
+
+  get depthz(){
+    return this.z
+  }
+
+
   get mesh(){
 
     return {mesh: this.triangleMesh, shader:this.shader.use().variables()}
@@ -56,17 +73,24 @@ class Quad {
 }
 
 function generateVortex(){
-  debugger
-  const SIZE = 4
-  const RADIUS = 8
+  const SIZE = 16
+  const RADIUS = 11
   let slice = 360/SIZE
   let quads = []
-  for(let i=0; i<SIZE; i++){
-    let quad = new Quad(shader)
-    quad.moveToAngle(slice, RADIUS)
+  let pos = 0
+  const rnd = n => (Math.random() * n)  
 
-    quads.push(quad)
-  }
+  for(let z=0; z<50; z++)
+    for(let i=0; i<SIZE; i++){
+      let quad = new Quad(shader)
+      quad.moveToAngle(pos, RADIUS)
+      quad.depth(-(z*20))
+      quad.speed = rnd(4.5)+0.2
+
+      pos += slice
+
+      quads.push(quad)
+    }
   return quads
 }
 let quads = generateVortex()
@@ -77,6 +101,18 @@ quads.forEach(quad => scene.addObject(quad.mesh))
 function newFrame() {
 
   return () => {
+    
+    quads.forEach(quad => {
+      let angle = quad.angle + quad.speed 
+      let z = quad.depthz + quad.speed
+      if(z>65) z = -1000
+
+      let radius = quad.radius  
+      quad.moveToAngle(angle, radius)
+      quad.depth(z)
+    })
+
+
     scene.render()
   }
 }
