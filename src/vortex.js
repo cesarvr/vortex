@@ -25,7 +25,6 @@ function resize_viewport({canvas, webGL}) {
 export default class Vortex {
   constructor({canvasElement}) {
 
-    debugger
     let canvas = document.querySelector('#glCanvas')
 
 

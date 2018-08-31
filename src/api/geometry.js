@@ -47,7 +47,7 @@ export class Model {
   }
 
   move({ x, y, z}) {
-    mat4.translate(this.m4ModelView, this.m4ModelView, [x || 0, y || 0, z || 0])
+    mat4.translate(this.m4ModelView, mat4.create(), [x || 0, y || 0, z || 0])
   }
 
   get mat4() {
