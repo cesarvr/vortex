@@ -11,7 +11,7 @@ export class Buffer {
   }
 
   get drawStyle() {
-    return {'strip': this.gl.TRIANGLE_STRIP}
+    return {'strip': this.gl.TRIANGLE_STRIP, 'points': this.gl.POINTS}
   }
 
   get buffer() {
@@ -49,7 +49,7 @@ export class Shader {
   }
 
   use(){
-  
+
     this.gl.useProgram(this.program)
     return this
   }

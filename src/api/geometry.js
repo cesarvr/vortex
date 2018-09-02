@@ -1,7 +1,6 @@
-const TRIANGLE_LENGTH = 3
 import {mat4} from 'gl-matrix'
 
-export class TriangleMesh {
+class Mesh {
   constructor(Store) {
     this.Store = Store
     this._position = new Model()
@@ -20,17 +19,7 @@ export class TriangleMesh {
     return this.Store.buffer
   }
 
-  get count() {
-    return TRIANGLE_LENGTH
-  }
 
-  get length() {
-    return this.mesh.length / TRIANGLE_LENGTH
-  }
-
-  get style() {
-    return this.Store.drawStyle.strip
-  }
 
   get position(){
     return this._position
@@ -52,5 +41,48 @@ export class Model {
 
   get mat4() {
     return this.m4ModelView
+  }
+}
+
+const POINT_LENGTH = 3
+export class PointMesh extends Mesh {
+  constructor(Store){
+    super(Store)
+  }
+
+  get count() {
+    return TRIANGLE_LENGTH
+  }
+
+  get style() {
+    return this.Store.drawStyle.strip
+  }
+
+
+  get length() {
+    return this.mesh.length / POINT_LENGTH
+  }
+
+  get style() {
+    return this.Store.drawStyle.points
+  }
+}
+
+const TRIANGLE_LENGTH = 3
+export class TriangleMesh extends Mesh {
+  constructor(Store){
+    super(Store)
+  }
+
+  get count() {
+    return TRIANGLE_LENGTH
+  }
+
+  get style() {
+    return this.Store.drawStyle.strip
+  }
+
+  get length() {
+    return this.mesh.length / TRIANGLE_LENGTH
   }
 }

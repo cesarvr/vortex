@@ -18,10 +18,9 @@ const shader = initShader(vortex)
 class Quad {
 
   constructor(shader){
-    this.triangleMesh = vortex.build('triangle')
+    this.triangleMesh = vortex.build('point')
     this.triangleMesh.mesh = [
-      1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
-      1.0, -1.0, 0.0, -1.0, -1.0, 0.0
+      0.0, 0.0, 0.0
     ]
     this.triangleMesh.position.center()
     const rad_to_deg = rad => rad*180/Math.PI
@@ -44,13 +43,13 @@ class Quad {
    this.z = value
    this.triangleMesh.position.move({x:this.x, y:this.y, z:value})
   }
- 
+
   set speed(value) {
     this._speed = value
   }
 
   get speed(){
-    return this._speed 
+    return this._speed
   }
 
   get radius(){
@@ -73,19 +72,19 @@ class Quad {
 }
 
 function generateVortex(){
-  const SIZE = 16
-  const RADIUS = 11
+  const SIZE = 25
+  const RADIUS = 51
   let slice = 360/SIZE
   let quads = []
   let pos = 0
-  const rnd = n => (Math.random() * n)  
+  const rnd = n => (Math.random() * n)
 
-  for(let z=0; z<50; z++)
+  for(let z=0; z<SIZE; z++)
     for(let i=0; i<SIZE; i++){
       let quad = new Quad(shader)
       quad.moveToAngle(pos, RADIUS)
       quad.depth(-(z*20))
-      quad.speed = rnd(4.5)+0.2
+      quad.speed = rnd(2.5)+0.2
 
       pos += slice
 
@@ -101,13 +100,13 @@ quads.forEach(quad => scene.addObject(quad.mesh))
 function newFrame() {
 
   return () => {
-    
+
     quads.forEach(quad => {
-      let angle = quad.angle + quad.speed 
+      let angle = quad.angle + quad.speed
       let z = quad.depthz + quad.speed
       if(z>65) z = -1000
 
-      let radius = quad.radius  
+      let radius = quad.radius
       quad.moveToAngle(angle, radius)
       quad.depth(z)
     })

@@ -1,22 +1,29 @@
 import {Buffer, Shader} from './core/gl'
 import { Scene } from './core/scene'
-import {TriangleMesh} from './api/geometry'
+import {TriangleMesh, PointMesh} from './api/geometry'
 
-function TriangleBuilder(gl) {
-  return new TriangleMesh(new Buffer(gl))
+function MeshBuilder(Mesh) {
+  return function(gl){
+    return new Mesh(new Buffer(gl))
+  }
 }
 
-const factory = { 'buffer': Buffer, 'shader': Shader, 'triangle': TriangleBuilder, 'scene':Scene }
+const factory = { 'buffer': Buffer,
+                  'shader': Shader,
+                  'triangle': MeshBuilder(TriangleMesh),
+                  'point': MeshBuilder(PointMesh),
+                  'scene':Scene
+                }
 
 function resize_viewport({canvas, webGL}) {
   console.log("Resource conscious resize callback!")
 
   let pixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1.0
-  let width  = pixelRatio * canvas.clientWidth 
+  let width  = pixelRatio * canvas.clientWidth
   let height = pixelRatio * canvas.clientHeight
 
   canvas.width = width
-  canvas.height = height 
+  canvas.height = height
 
   console.log(`width:${width} height:${height}`)
   webGL.viewport(0, 0, webGL.drawingBufferWidth, webGL.drawingBufferHeight)
