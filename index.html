@@ -25,9 +25,11 @@
 
     <script id="fragment">
      precision mediump float;
+     uniform sampler2D s_texture;
 
      void main(void) {
-       gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+       vec4 texture_color = texture2D( s_texture, gl_PointCoord );
+       gl_FragColor = texture_color * vec4(1.0, 1.0, 1.0, 1.0);
      }
     </script>
 

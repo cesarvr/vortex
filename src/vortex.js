@@ -1,4 +1,4 @@
-import {Buffer, Shader} from './core/gl'
+import {Buffer, Shader, Texture} from './core/gl'
 import { Scene } from './core/scene'
 import {TriangleMesh, PointMesh} from './api/geometry'
 
@@ -10,6 +10,7 @@ function MeshBuilder(Mesh) {
 
 const factory = { 'buffer': Buffer,
                   'shader': Shader,
+                  'texture': Texture,
                   'triangle': MeshBuilder(TriangleMesh),
                   'point': MeshBuilder(PointMesh),
                   'scene':Scene
@@ -34,8 +35,6 @@ export default class Vortex {
 
     let canvas = document.querySelector('#glCanvas')
 
-
-
     // Initialize the GL context
     const webGL = canvas.getContext('webgl')
     this.webGL =  webGL
@@ -53,7 +52,6 @@ export default class Vortex {
     })
 
     resize_viewport({canvas: canvas, webGL:webGL })
-
   }
 
   build(name) {

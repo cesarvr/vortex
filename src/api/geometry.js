@@ -19,8 +19,6 @@ class Mesh {
     return this.Store.buffer
   }
 
-
-
   get position(){
     return this._position
   }

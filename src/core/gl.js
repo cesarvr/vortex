@@ -43,9 +43,11 @@ export class Shader {
 
   setup() {
     this.data.vertex = this.gl.getAttribLocation(this.program, 'aVertexPosition')
+
     this.gl.enableVertexAttribArray(this.data.vertex)
 
     this.data.MVP = this.gl.getUniformLocation(this.program, 'MVP')
+    this.data.texture = this.gl.getUniformLocation(this.program, 's_texture')
   }
 
   use(){
@@ -96,5 +98,40 @@ export class Shader {
     this.data = {}
     this.gl = gl
     this.shader_code = {}
+  }
+}
+
+export class Texture {
+
+  constructor({gl}) {
+    this.texture = gl.createTexture()
+    this.gl = gl
+    this.imageLoaded = false
+  }
+
+  setShaderTextureValue(uniform){
+    this.textureShaderUniform = uniform
+  }
+
+  load(image){
+    const gl = this.gl
+    gl.bindTexture(gl.TEXTURE_2D, this.texture)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+    gl.bindTexture(gl.TEXTURE_2D, null)
+
+    this.imageLoaded = true
+  }
+
+  paint() {
+    if(this.imageLoaded) {
+      gl.activeTexture(gl.TEXTURE0)
+      gl.bindTexture(gl.TEXTURE_2D, this.texture)
+      gl.uniform1i(this.textureShaderUniform, 0)
+    }else{
+      console.error('Image is not loaded!!!.')
+    }
   }
 }

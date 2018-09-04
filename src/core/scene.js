@@ -5,7 +5,7 @@ const deg_to_rad = (deg) => (deg * Math.PI) / 180
 export class Scene {
   constructor({gl}) {
     this.width = 1048
-    this.height = 709 
+    this.height = 709
 
     this.objects = []
     this.gl = gl
@@ -26,7 +26,12 @@ export class Scene {
   render() {
     let gl = this.gl
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-    this.objects.forEach((obj) => this.paint(obj))
+    //this.objects.forEach((obj) => this.paint(obj))
+    let objects_size = this.objects.length
+    for(let i=0; i<objects_size; i++){
+      let obj = this.objects[i]
+      this.paint(obj)
+    }
   }
 
   paint(object) {
@@ -36,13 +41,14 @@ export class Scene {
     mat4.multiply(mvp, this.camera_m4, object.mesh.position.mat4)
     mat4.multiply(mvp, this.projection_m4, mvp)
 
-
+    if (object.texture) {
+      object.texture.paint()
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.buffer)
     gl.vertexAttribPointer(object.shader.vertex, object.mesh.count, gl.FLOAT, false, 0, 0)
     gl.uniformMatrix4fv(object.shader.MVP, false, mvp)
 
     gl.drawArrays(object.mesh.style, 0, object.mesh.length)
-    gl.getError()
   }
 
 }

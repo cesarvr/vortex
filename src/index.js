@@ -1,5 +1,5 @@
 import Vortex from './vortex'
-
+import {loadImage} from './api/tools'
 const vortex = new Vortex(document.querySelector('#glCanvas'))
 
 function initShader(vortex) {
@@ -13,11 +13,25 @@ function initShader(vortex) {
     .compile()
 }
 
-const shader = initShader(vortex)
+
+function initTexture(shader){
+
+  let texture = vortex.build('texture')
+
+  loadImage('sprites/star.png')
+    .then((image)=>texture.load(image))
+
+  texture.setShaderTextureValue(shader.variables.texture)
+
+  return texture
+}
+
+
+
 
 class Quad {
 
-  constructor(shader){
+  constructor({shader, texture}){
     this.triangleMesh = vortex.build('point')
     this.triangleMesh.mesh = [
       0.0, 0.0, 0.0
@@ -28,6 +42,7 @@ class Quad {
     this.polarx = (i,radius)=> Math.cos(deg_to_rad(i))*radius
     this.polary = (i,radius)=> Math.sin(deg_to_rad(i))*radius
 
+    this.texture = texture
     this.shader = shader
   }
 
@@ -64,51 +79,52 @@ class Quad {
     return this.z
   }
 
-
   get mesh(){
-
-    return {mesh: this.triangleMesh, shader:this.shader.use().variables()}
+    return {mesh: this.triangleMesh, shader:this.shader.use().variables(), texture: this.texture}
   }
 }
 
 function generateVortex(){
-  const SIZE = 25
+  const shader = initShader(vortex)
+  const texture = initTexture(shader)
+
+  const SIZE = 1
   const RADIUS = 51
   let slice = 360/SIZE
-  let quads = []
+  let particles = []
   let pos = 0
   const rnd = n => (Math.random() * n)
 
   for(let z=0; z<SIZE; z++)
     for(let i=0; i<SIZE; i++){
-      let quad = new Quad(shader)
-      quad.moveToAngle(pos, RADIUS)
-      quad.depth(-(z*20))
-      quad.speed = rnd(2.5)+0.2
+      let particle = new Quad(shader)
+      particle.moveToAngle(pos, RADIUS)
+      particle.depth(-(z*20))
+      particle.speed = rnd(5.5)+0.01
 
       pos += slice
-
-      quads.push(quad)
+      particles.push(particle)
     }
-  return quads
+  return particles
 }
-let quads = generateVortex()
+
+let particles = generateVortex()
 const scene = vortex.build('scene')
-quads.forEach(quad => scene.addObject(quad.mesh))
+particles.forEach(particle => scene.addObject(particle.mesh))
 
 
 function newFrame() {
 
   return () => {
 
-    quads.forEach(quad => {
-      let angle = quad.angle + quad.speed
-      let z = quad.depthz + quad.speed
+    particles.forEach(particle => {
+      let angle = particle.angle + particle.speed
+      let z = particle.depthz + particle.speed
       if(z>65) z = -1000
 
-      let radius = quad.radius
-      quad.moveToAngle(angle, radius)
-      quad.depth(z)
+      let radius = particle.radius
+      particle.moveToAngle(angle, radius)
+      particle.depth(z)
     })
 
 
