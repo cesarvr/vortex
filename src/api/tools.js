@@ -13,3 +13,18 @@ export function loadImage(imageURL) {
     image.src = imageURL
   })
 }
+
+export function XORTexture(size) {
+  let pix = []
+
+  for (let x = 0; x < size; x++) {
+    for (let y = 0; y < size; y++) {
+      let xor = x ^ y;
+      pix.push(xor) // r
+      pix.push(xor) // g
+      pix.push(xor) // b 
+    }
+  }
+
+  return new Uint8Array(pix)
+}

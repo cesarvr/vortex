@@ -1,5 +1,5 @@
 import Vortex from './vortex'
-import {loadImage} from './api/tools'
+import {loadImage, XORTexture} from './api/tools'
 const vortex = new Vortex(document.querySelector('#glCanvas'))
 
 function initShader(vortex) {
@@ -18,15 +18,15 @@ function initTexture(shader){
 
   let texture = vortex.build('texture')
 
-  loadImage('sprites/star.png')
-    .then((image)=>texture.load(image))
+//  loadImage('sprites/star_4.png')
+  //  .then((image)=>texture.load(image))
+ 
+  texture.load(XORTexture(64))
 
-  texture.setShaderTextureValue(shader.variables.texture)
+  texture.setShaderTextureValue(shader.variables().texture)
 
   return texture
 }
-
-
 
 
 class Quad {
@@ -88,7 +88,7 @@ function generateVortex(){
   const shader = initShader(vortex)
   const texture = initTexture(shader)
 
-  const SIZE = 1
+  const SIZE = 50
   const RADIUS = 51
   let slice = 360/SIZE
   let particles = []
@@ -97,10 +97,11 @@ function generateVortex(){
 
   for(let z=0; z<SIZE; z++)
     for(let i=0; i<SIZE; i++){
-      let particle = new Quad(shader)
+      let particle = new Quad({texture, shader})
       particle.moveToAngle(pos, RADIUS)
       particle.depth(-(z*20))
       particle.speed = rnd(5.5)+0.01
+      particle.arc = rnd(2)
 
       pos += slice
       particles.push(particle)
@@ -118,9 +119,9 @@ function newFrame() {
   return () => {
 
     particles.forEach(particle => {
-      let angle = particle.angle + particle.speed
+      let angle = particle.angle + particle.arc
       let z = particle.depthz + particle.speed
-      if(z>65) z = -1000
+      if(z>165) z = -1000
 
       let radius = particle.radius
       particle.moveToAngle(angle, radius)

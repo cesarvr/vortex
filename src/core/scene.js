@@ -15,7 +15,7 @@ export class Scene {
     mat4.perspective(this.projection_m4, deg_to_rad(45), 1920 / 1080 , 0.1, 1000.0)
     mat4.lookAt(this.camera_m4, [0, 0, 43], [0, 0, 0], [0, 1, 0])
 
-    gl.clearColor(0.1, 0.1, 0.1, 1.0)
+    gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.enable(gl.DEPTH_TEST)
   }
 
@@ -44,6 +44,7 @@ export class Scene {
     if (object.texture) {
       object.texture.paint()
     }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.buffer)
     gl.vertexAttribPointer(object.shader.vertex, object.mesh.count, gl.FLOAT, false, 0, 0)
     gl.uniformMatrix4fv(object.shader.MVP, false, mvp)
