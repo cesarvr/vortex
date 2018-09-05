@@ -20,7 +20,7 @@ function initTexture(shader){
 
 //  loadImage('sprites/star_4.png')
   //  .then((image)=>texture.load(image))
- 
+
   texture.load(XORTexture(64))
 
   texture.setShaderTextureValue(shader.variables().texture)
@@ -50,13 +50,13 @@ class Quad {
     this._angle = angleInDegrees
     this._radius = radius
     this.x = this.polarx(angleInDegrees, radius)
-    this.y = this.polary(angleInDegrees, radius)
+    this.z = this.polary(angleInDegrees, radius)
     this.triangleMesh.position.move({x:this.x, y: this.y, z: this.z})
   }
 
   depth(value){
-   this.z = value
-   this.triangleMesh.position.move({x:this.x, y:this.y, z:value})
+   this.y = value
+   this.triangleMesh.position.move({x:this.x, y:this.y, z:this.z})
   }
 
   set speed(value) {
@@ -76,7 +76,7 @@ class Quad {
   }
 
   get depthz(){
-    return this.z
+    return this.y
   }
 
   get mesh(){
@@ -88,8 +88,8 @@ function generateVortex(){
   const shader = initShader(vortex)
   const texture = initTexture(shader)
 
-  const SIZE = 50
-  const RADIUS = 51
+  const SIZE = 10
+  const RADIUS = 6
   let slice = 360/SIZE
   let particles = []
   let pos = 0
@@ -98,10 +98,10 @@ function generateVortex(){
   for(let z=0; z<SIZE; z++)
     for(let i=0; i<SIZE; i++){
       let particle = new Quad({texture, shader})
-      particle.moveToAngle(pos, RADIUS)
-      particle.depth(-(z*20))
-      particle.speed = rnd(5.5)+0.01
-      particle.arc = rnd(2)
+      particle.moveToAngle(pos, rnd(RADIUS))
+      particle.depth((z*2))
+      particle.speed = rnd(1.5)+0.01
+      particle.arc = rnd(5)
 
       pos += slice
       particles.push(particle)
@@ -121,7 +121,7 @@ function newFrame() {
     particles.forEach(particle => {
       let angle = particle.angle + particle.arc
       let z = particle.depthz + particle.speed
-      if(z>165) z = -1000
+      if(z>165) z = -100
 
       let radius = particle.radius
       particle.moveToAngle(angle, radius)
