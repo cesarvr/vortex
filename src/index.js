@@ -1,5 +1,4 @@
 import Vortex from './vortex'
-import {loadImage, XORTexture} from './api/tools'
 const vortex = new Vortex(document.querySelector('#glCanvas'))
 
 function initShader(vortex) {
@@ -13,36 +12,17 @@ function initShader(vortex) {
     .compile()
 }
 
-
-function initTexture(shader){
-
-  let texture = vortex.build('texture')
-
-//  loadImage('sprites/star_4.png')
-  //  .then((image)=>texture.load(image))
-
-  texture.load(XORTexture(64))
-
-  texture.setShaderTextureValue(shader.variables().texture)
-
-  return texture
-}
-
-
 class Quad {
 
   constructor({shader, texture}){
     this.triangleMesh = vortex.build('point')
-    this.triangleMesh.mesh = [
-      0.0, 0.0, 0.0
-    ]
+    this.triangleMesh.mesh = [  0.0, 0.0, 0.0 ]
     this.triangleMesh.position.center()
     const rad_to_deg = rad => rad*180/Math.PI
     const deg_to_rad = deg => deg * Math.PI / 180
     this.polarx = (i,radius)=> Math.cos(deg_to_rad(i))*radius
     this.polary = (i,radius)=> Math.sin(deg_to_rad(i))*radius
 
-    this.texture = texture
     this.shader = shader
   }
 
@@ -50,12 +30,12 @@ class Quad {
     this._angle = angleInDegrees
     this._radius = radius
     this.x = this.polarx(angleInDegrees, radius)
-    this.z = this.polary(angleInDegrees, radius)
+    this.y = this.polary(angleInDegrees, radius)
     this.triangleMesh.position.move({x:this.x, y: this.y, z: this.z})
   }
 
   depth(value){
-   this.y = value
+   this.z = value
    this.triangleMesh.position.move({x:this.x, y:this.y, z:this.z})
   }
 
@@ -76,20 +56,19 @@ class Quad {
   }
 
   get depthz(){
-    return this.y
+    return this.z
   }
 
   get mesh(){
-    return {mesh: this.triangleMesh, shader:this.shader.use().variables(), texture: this.texture}
+    return {mesh: this.triangleMesh, shader:this.shader.use().variables()}
   }
 }
 
 function generateVortex(){
   const shader = initShader(vortex)
-  const texture = initTexture(shader)
 
-  const SIZE = 10
-  const RADIUS = 6
+  const SIZE = 40
+  const RADIUS = 46
   let slice = 360/SIZE
   let particles = []
   let pos = 0
@@ -97,8 +76,8 @@ function generateVortex(){
 
   for(let z=0; z<SIZE; z++)
     for(let i=0; i<SIZE; i++){
-      let particle = new Quad({texture, shader})
-      particle.moveToAngle(pos, rnd(RADIUS))
+      let particle = new Quad({undefined, shader})
+      particle.moveToAngle(pos, RADIUS)
       particle.depth((z*2))
       particle.speed = rnd(1.5)+0.01
       particle.arc = rnd(5)
@@ -121,7 +100,7 @@ function newFrame() {
     particles.forEach(particle => {
       let angle = particle.angle + particle.arc
       let z = particle.depthz + particle.speed
-      if(z>165) z = -100
+      if(z>165) z = -400
 
       let radius = particle.radius
       particle.moveToAngle(angle, radius)
