@@ -41,6 +41,7 @@ export class Scene {
     gl.uniformMatrix4fv(object.shader.MVP, false, mvp)
 
     gl.drawArrays(object.mesh.style, 0, object.mesh.length)
+    gl.getError()
   }
 
 }
