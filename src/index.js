@@ -89,7 +89,7 @@ function generateVortex(){
   const shader = initShader(vortex)
   const texture = initTexture(shader)
 
-  const SIZE = 19
+  const SIZE = 24
   const RADIUS = 10
   let slice = 360/SIZE
   let particles = []
@@ -102,7 +102,7 @@ function generateVortex(){
       particle.moveToAngle(pos, rnd(RADIUS))
       particle.depth(rnd(365)*-1)
       particle.speed = rnd(.9)+0.01
-      particle.arc = rnd(2)
+      particle.arc = rnd(1)
 
       pos += slice
       particles.push(particle)

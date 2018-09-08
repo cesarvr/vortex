@@ -46,14 +46,13 @@
        vec4 color;
        float d = 256.0;
 
-       //color = vec4(242.0/d, 125.0/d, 12.0/d, 1.0);
        float h = min(gl_FragCoord.y/1800.0 , .8);
-       float y = min(gl_FragCoord.y/1800.0 , .2);
+       float contrib = 0.9-h;
        color = vec4(0.0, 0.0, 0.0, 1.0);
-       vec3 start_color = vec3(1.0-h, .0+y, .2);
+       vec3 start_color = vec3(1.0, .1+h, .1);
 
        vec4 texture_color = texture2D( s_texture, gl_PointCoord );
-       gl_FragColor = vec4(start_color, 1.0);
+       gl_FragColor = vec4(start_color * contrib, 1.0);
      }
     </script>
 
