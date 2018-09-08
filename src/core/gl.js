@@ -119,7 +119,6 @@ export class Texture {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
     //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
 
-    debugger
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 64, 64, 0, gl.RGB,
 	            gl.UNSIGNED_BYTE, image)
 

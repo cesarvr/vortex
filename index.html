@@ -22,27 +22,41 @@
   </head>
 
   <body>
+    <script id="vertex">
+      attribute vec3 aVertexPosition;
+      varying vec4 pos;
+      uniform mat4 MVP;
+
+      void main(void) {
+        gl_PointSize = 9.0;
+        pos = vec4(aVertexPosition, 1.0);
+        gl_Position = MVP * vec4(aVertexPosition, 1.0);
+      }
+    </script>
 
     <script id="fragment">
      precision mediump float;
      uniform sampler2D s_texture;
+     varying vec4 pos;
+
 
      void main(void) {
+       float nnn = dot(pos, gl_FragCoord) + 1.0;
+       vec4 distance = normalize(pos - gl_FragCoord);
+       vec4 color;
+       float d = 256.0;
+
+       //color = vec4(242.0/d, 125.0/d, 12.0/d, 1.0);
+       float h = min(gl_FragCoord.y/1800.0 , .8);
+       float y = min(gl_FragCoord.y/1800.0 , .2);
+       color = vec4(0.0, 0.0, 0.0, 1.0);
+       vec3 start_color = vec3(1.0-h, .0+y, .2);
+
        vec4 texture_color = texture2D( s_texture, gl_PointCoord );
-       gl_FragColor = vec4(242.0/256.0, 125.0/256.0, 12/256, 1.0);
+       gl_FragColor = vec4(start_color, 1.0);
      }
     </script>
 
-    <script id="vertex">
-      attribute vec3 aVertexPosition;
-
-      uniform mat4 MVP;
-
-      void main(void) {
-        gl_PointSize = 4.0;
-        gl_Position = MVP * vec4(aVertexPosition, 1.0);
-      }
-    </script>
 
 
     <div class="container">

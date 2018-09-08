@@ -31,11 +31,12 @@ function initTexture(shader){
 
 class Quad {
 
-  constructor({shader, texture}){
+  constructor({shader, texture}) {
     this.triangleMesh = vortex.build('point')
     this.triangleMesh.mesh = [
       0.0, 0.0, 0.0
     ]
+
     this.triangleMesh.position.center()
     const rad_to_deg = rad => rad*180/Math.PI
     const deg_to_rad = deg => deg * Math.PI / 180
@@ -88,8 +89,8 @@ function generateVortex(){
   const shader = initShader(vortex)
   const texture = initTexture(shader)
 
-  const SIZE = 10
-  const RADIUS = 6
+  const SIZE = 19
+  const RADIUS = 10
   let slice = 360/SIZE
   let particles = []
   let pos = 0
@@ -99,9 +100,9 @@ function generateVortex(){
     for(let i=0; i<SIZE; i++){
       let particle = new Quad({texture, shader})
       particle.moveToAngle(pos, rnd(RADIUS))
-      particle.depth((z*2))
-      particle.speed = rnd(1.5)+0.01
-      particle.arc = rnd(5)
+      particle.depth(rnd(365)*-1)
+      particle.speed = rnd(.9)+0.01
+      particle.arc = rnd(2)
 
       pos += slice
       particles.push(particle)
@@ -121,7 +122,7 @@ function newFrame() {
     particles.forEach(particle => {
       let angle = particle.angle + particle.arc
       let z = particle.depthz + particle.speed
-      if(z>165) z = -100
+      if(z>365) z = -100
 
       let radius = particle.radius
       particle.moveToAngle(angle, radius)
